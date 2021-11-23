@@ -19,7 +19,9 @@
     left: 0;
     z-index: 1001;
     overflow: hidden;
-
+    .el-icon-arrow-down:before {
+        color: #fff;
+    }
     // reset element-ui css
     .horizontal-collapse-transition {
       transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
@@ -133,6 +135,7 @@
 
         .el-submenu__icon-arrow {
           display: none;
+          // background-color: #fff;
         }
       }
     }

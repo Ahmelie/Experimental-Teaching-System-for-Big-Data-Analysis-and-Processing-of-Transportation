@@ -28,7 +28,7 @@
             <el-dropdown-item>Profile</el-dropdown-item>
           </router-link>
           <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
+            <el-dropdown-item>主页</el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>Github</el-dropdown-item>
@@ -87,7 +87,7 @@ export default {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  // background-color: rgb(179, 199, 185);
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
 
   .hamburger-container {

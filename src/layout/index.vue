@@ -4,19 +4,20 @@
     <sidebar class="sidebar-container" />
     <div :class="{hasTagsView:needTagsView}" class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
+        <div class="tittle">交通出行大数据分析处理实验教学系统</div>
         <navbar />
         <tags-view v-if="needTagsView" />
       </div>
       <app-main />
-      <right-panel v-if="showSettings">
+      <!-- <right-panel v-if="showSettings">
         <settings />
-      </right-panel>
+      </right-panel> -->
     </div>
   </div>
 </template>
 
 <script>
-import RightPanel from '@/components/RightPanel'
+// import RightPanel from '@/components/RightPanel'
 import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
@@ -26,7 +27,7 @@ export default {
   components: {
     AppMain,
     Navbar,
-    RightPanel,
+    // RightPanel,
     Settings,
     Sidebar,
     TagsView
@@ -66,7 +67,6 @@ export default {
     position: relative;
     height: 100%;
     width: 100%;
-
     &.mobile.openSidebar {
       position: fixed;
       top: 0;
@@ -98,5 +98,13 @@ export default {
 
   .mobile .fixed-header {
     width: 100%;
+  }
+  .tittle{
+    text-align: center;
+    height: 100px;
+    line-height: 100px;
+    font-size: 33px;
+    color: #fff;
+    background-color: #5a8f89;
   }
 </style>

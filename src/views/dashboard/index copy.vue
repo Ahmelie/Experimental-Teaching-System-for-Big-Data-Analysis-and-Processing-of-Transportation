@@ -1,15 +1,17 @@
 <template>
   <div class="dashboard-container">
-    <!-- <component :is="currentRole" /> -->
-    <h1 class="welcome-words">欢迎</h1>
+    <component :is="currentRole" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import adminDashboard from './admin'
+import editorDashboard from './editor'
 
 export default {
   name: 'Dashboard',
+  components: { adminDashboard, editorDashboard },
   data() {
     return {
       currentRole: 'adminDashboard'
@@ -27,10 +29,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.welcome-words{
-  height: 100px;
-  margin-top:100px;
-  text-align: center;
-}
-</style>

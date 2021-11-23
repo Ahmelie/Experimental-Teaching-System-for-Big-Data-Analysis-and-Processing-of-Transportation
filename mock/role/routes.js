@@ -41,32 +41,237 @@ const constantRoutes = [
         path: 'dashboard',
         component: 'views/dashboard/index',
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: '主页', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
+  // {
+  //   path: '/documentation',
+  //   component: 'layout/Layout',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: 'views/documentation/index',
+  //       name: 'Documentation',
+  //       meta: { title: 'Documentation', icon: 'documentation', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/guide',
+  //   component: 'layout/Layout',
+  //   redirect: '/guide/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: 'views/guide/index',
+  //       name: 'Guide',
+  //       meta: { title: 'Guide', icon: 'guide', noCache: true }
+  //     }
+  //   ]
+  // },
+  {
+    path: '/Pretreatment',
+    component: 'layout/Layout',
+    redirect: '/Pretreatment/index',
+    children: [
+      {
+        path: 'index',
+        component: 'views/Pretreatment/index',
+        name: 'Pretreatment',
+        meta: { title: '交通出行数据轨迹预处理模块', icon: 'Pretreatment', noCache: true }
       }
     ]
   },
   {
-    path: '/documentation',
+    path: '/Pretreatment',
     component: 'layout/Layout',
+    redirect: '/Pretreatment/index',
+    alwaysShow: true,
+    meta: {
+      title: '交通出行数据轨迹预处理模块',
+      icon: 'bug',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'page',
+        component: 'views/permission/page',
+        name: 'PagePermission',
+        meta: {
+          title: 'Page Permission',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'directive',
+        component: 'views/permission/directive',
+        name: 'DirectivePermission',
+        meta: {
+          title: 'Directive Permission'
+        }
+      },
+      {
+        path: 'role',
+        component: 'views/permission/role',
+        name: 'RolePermission',
+        meta: {
+          title: 'Role Permission',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+
+  {
+    path: 'Search',
+    component: 'layout/Layout',
+    redirect: '/Search/index',
     children: [
       {
         path: 'index',
-        component: 'views/documentation/index',
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
+        component: 'views/Search/index',
+        name: 'Search',
+        meta: { title: '交通出行数据时空查询模块', icon: 'example', noCache: true }
+      }
+    ]
+  },
+  // {
+  //   path: 'Search',
+  //   component: 'layout/Layout',
+  //   redirect: '/Search/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: 'views/Search/index',
+  //       name: 'Search',
+  //       meta: { title: '交通出行数据时空查询模块', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/Search',
+  //   component: 'layout/Layout',
+  //   redirect: '/Search/index',
+  //   alwaysShow: true,
+  //   meta: {
+  //     title: '交通出行数据时空查询模块',
+  //     icon: 'example',
+  //     roles: ['admin', 'editor']
+  //   },
+  //   children: [
+  //     {
+  //       path: 'page',
+  //       component: 'views/permission/page',
+  //       name: 'PagePermission',
+  //       meta: {
+  //         title: 'Page Permission',
+  //         roles: ['admin']
+  //       }
+  //     },
+  //     {
+  //       path: 'directive',
+  //       component: 'views/permission/directive',
+  //       name: 'DirectivePermission',
+  //       meta: {
+  //         title: 'Directive Permission'
+  //       }
+  //     },
+  //     {
+  //       path: 'role',
+  //       component: 'views/permission/role',
+  //       name: 'RolePermission',
+  //       meta: {
+  //         title: 'Role Permission',
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
+  {
+    path: '/Analysis',
+    component: 'layout/Layout',
+    redirect: '/Analysis/index',
+    alwaysShow: true,
+    meta: {
+      title: '交通流流向分析模块',
+      icon: 'eye',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'page',
+        component: 'views/permission/page',
+        name: 'PagePermission',
+        meta: {
+          title: 'Page Permission',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'directive',
+        component: 'views/permission/directive',
+        name: 'DirectivePermission',
+        meta: {
+          title: 'Directive Permission'
+        }
+      },
+      {
+        path: 'role',
+        component: 'views/permission/role',
+        name: 'RolePermission',
+        meta: {
+          title: 'Role Permission',
+          roles: ['admin']
+        }
       }
     ]
   },
   {
-    path: '/guide',
+    path: '/Optimization',
     component: 'layout/Layout',
-    redirect: '/guide/index',
+    redirect: '/Optimization/index',
+    alwaysShow: true,
+    meta: {
+      title: '交通设施资源优化模块',
+      icon: 'guide',
+      roles: ['admin', 'editor']
+    },
     children: [
       {
-        path: 'index',
-        component: 'views/guide/index',
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
+        path: 'hotMap',
+        component: 'views/Optimization/hotMap',
+        name: 'hotMap',
+        meta: {
+          title: '热力图',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'shortestPath',
+        component: 'views/Optimization/shortestPath',
+        name: 'shortestPath',
+        meta: {
+          title: '经验路段推荐',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'hotRoad',
+        component: 'views/Optimization/hotRoad',
+        name: 'hotRoad',
+        meta: {
+          title: '热点路段'
+        }
+      },
+      {
+        path: 'hotPlace',
+        component: 'views/Optimization/hotPlace',
+        name: 'hotPlace',
+        meta: {
+          title: '热点场所',
+          roles: ['admin']
+        }
       }
     ]
   }

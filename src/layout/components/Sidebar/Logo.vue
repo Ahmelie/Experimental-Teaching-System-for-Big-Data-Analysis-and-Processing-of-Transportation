@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import logopic from '@/assets/car_logo.png'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -24,8 +25,8 @@ export default {
   },
   data() {
     return {
-      title: 'Vue Element Admin',
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      title: ' ',
+      logo: logopic
     }
   }
 }
@@ -44,9 +45,9 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
-  background: #2b2f3a;
+  height: 140px;
+  line-height: 140px;
+  background: rgb(100, 161, 157);
   text-align: center;
   overflow: hidden;
 
@@ -55,8 +56,8 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      width: 120px;
+      height: 120px;
       vertical-align: middle;
       margin-right: 12px;
     }
