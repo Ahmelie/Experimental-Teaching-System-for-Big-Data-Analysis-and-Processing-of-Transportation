@@ -100,11 +100,14 @@ export default {
     width: 100%;
   }
   .tittle{
-    text-align: center;
-    height: 100px;
-    line-height: 100px;
+    // text-align: left;
+    padding-left: 10px;
+    height: 80px;
+    line-height: 80px;
     font-size: 33px;
     color: #fff;
-    background-color: #5a8f89;
+    background-color: rgb(176,197,188);
+    text-shadow: 1px 1px 1px #4e4848;
+    font-style: italic;
   }
 </style>

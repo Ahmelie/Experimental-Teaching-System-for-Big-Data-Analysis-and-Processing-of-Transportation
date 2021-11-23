@@ -299,7 +299,7 @@ export const constantRoutes = [
         component: () => import('@/views/Optimization/hotMap'),
         name: 'hotMap',
         meta: {
-          title: '热力图'
+          title: '区域热力分析'
         }
       },
       {

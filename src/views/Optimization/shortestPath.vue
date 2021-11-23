@@ -39,7 +39,6 @@ export default {
   },
   methods: {
     init(startPoint,endPoint) {
-        let test=this.choosePoint;
         var vm=this
         BMPGL(this.ak).then((BMapGL) => {
         // 创建地图实例
