@@ -11,10 +11,6 @@
   <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
   <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-
-  <!--    <script src="E:/Test_Release/gis/ol/ol.js"></script>-->
-  <!--    <link href="E:/Test_Release/gis/ol/ol.css" rel="stylesheet" />-->
-
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
@@ -219,7 +215,6 @@
       fetch('http://120.26.74.21:8080/geoserver/wfs', {
         method: 'POST',
         body: new XMLSerializer().serializeToString(featureRequest),
-        // mode: 'no-cors'
       }).then(function (response) {
         return response.json();
       }).then(function (json) {
@@ -438,8 +433,6 @@
         return feature;
       });
       if (feature) { //捕捉到要素
-        // $('#menu2').css('display','inline')
-        // featuerInfo = feature.getProperties().features[0].N.attribute;
         $('#gpsspeedval').html(feature.get('starttime'))
         $('#vehiclenumberval').html(feature.get('vehiclenum'))
         console.log("获取到点击的要素" + ":" + coordinate[0]);  //其中lei是定义的属性
@@ -450,7 +443,6 @@
   var tempSource = new ol.source.Vector();
   var featureOverlay = new ol.layer.Vector({
     source: tempSource,
-    //style: hightStyle
   });
 
 
@@ -572,7 +564,6 @@
       fetch('http://120.26.74.21:8080/geoserver/wfs', {
         method: 'POST',
         body: new XMLSerializer().serializeToString(featureRequest),
-        // mode: 'no-cors'
       }).then(function (response) {
         return response.json();
       }).then(function (json) {
