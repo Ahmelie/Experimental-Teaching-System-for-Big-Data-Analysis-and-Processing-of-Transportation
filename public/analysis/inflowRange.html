@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基于汇的流入范围分析</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" rel="stylesheet" />
+    <link href='http://iclient.supermap.io/dist/openlayers/iclient-openlayers.min.css' rel='stylesheet' />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js"></script>
+    <script type="text/javascript" src="http://iclient.supermap.io/dist/openlayers/iclient-openlayers.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+</head>
+<body>
+<div class="row">
+    <div class="col-xs-4">
+        <div id="menu" style="position:absolute;top:50px;left:80px;width:300px;height:150px;z-index:99999;border: 1px solid #ccc; padding: 1em;background-color:rgba(245,245,245,0.6)">
+            <div align='center' style="font-size:20px;font-weight:bold;background-color:rgba(245,245,245,0.6);height:30px">
+                <label style="vertical-align:center">
+                    基于汇的流入范围分析
+                </label>
+            </div>
+            <div style="height:10px">
+            </div>
+            <ul>
+                <li>
+                    <input name="searchtype" value="polygon" id="polygonSearch"  type="radio">
+                    <label for="polygonSearch">多边形搜索</label>
+                </li>
+                <li>
+                    <input name="searchtype" value="circle" id="circleByStartPoint"  type="radio">
+                    <label for="polygonSearch">圆形搜索</label>
+                </li>
+                <li>
+                    <input name="searchtype" value="property" id="propertySearch"  type="radio">
+                    <label for="polygonSearch">属性查询</label>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="map" class="map" style="height:700px"></div>
+    <div id="scalebar"></div>
+    <div   id="featureInfo" style="background-color:white;position:absolute; right:100px; top:70px; z-index:999;overflow-x: auto; overflow-y: auto; height: 100px; width:500px; display: none">
+    </div>
+</div>
+<script>
+    var drawInteraction;
+    var selectInteration;
+    var modifyInteration;
+    var feature;
+    var draw;
+    var selectSource=new ol.source.Vector();
+    var selectVector=new ol.layer.Vector({
+        source:selectSource,
+        style:hightStyle,
+    });
+    var drawSource = new ol.source.Vector();
+    var hightStyle = new ol.style.Style({
+        //填充色
+        fill: new ol.style.Fill({
+            color: 'rgba(125,131,255,0.59)'
+        }),
+
+        //边线颜色
+        stroke: new ol.style.Stroke({
+            color: 'rgba(84,75,240,0.74)',
+            width: 3
+        }),
+        //形状
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: 'rgba(84,75,240,0.74)'
+            })
+        })
+    })
+    var drawVector = new ol.layer.Vector({
+        source: drawSource,
+        style:hightStyle
+    });
+    $('input:radio[name="searchtype"]').change(function() {
+        var checkValue = $('input:radio[name="searchtype"]:checked').val();
+        //console.log(checkValue);
+        if (checkValue == 'polygon') {
+            searchByPolygon();
+        } else if (checkValue == 'circle') {
+            searchByCircle();
+        } else if (checkValue == 'property') {
+            queryFeature();
+        }else {
+        }
+    });
+    function searchByPolygon() {
+        if(draw){
+            map.removeInteraction(draw);
+        }
+        draw = new ol.interaction.Draw({
+            source: drawSource,
+            type: 'Polygon',
+            geometryName: 'geometry'
+        });
+        map.addInteraction(draw);
+        draw.on('drawend', function (evt) {
+            if(drawVector.getKeys().length>0){
+                map.removeLayer(drawVector);
+                drawSource.clear();
+            }
+            var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ['origin'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.intersects("endpoint",  evt.feature.getGeometry())
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest)
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                    alert('未查询到数据！')
+                }else{
+                    var res=new Array();
+                    var p=new Array();
+                    var n=features.length;
+                    for(var i=0;i<n;i++){
+                        var g= features[i].getGeometry();
+                        p[i] = new Object();
+                        var properties = features[i].getProperties();
+                        console.log(features[i].getGeometry());
+                        p[i].x = features[i].getGeometry().getCoordinates()[0];
+                        p[i].y = features[i].getGeometry().getCoordinates()[1];
+                        p[i].tj = false;
+                    }
+                    var points=Graham_scan(p,res,n);
+                    var poin=[];
+                    for(var j=0;j<points.length;j++)
+                    {
+                        var a=new Array();
+                        a[0]=points[j].x;
+                        a[1]=points[j].y;
+                        poin.push(a)
+                    }
+                    poin.push(poin[0])
+                    var  roadLine = new ol.geom.Polygon( [poin]);
+                    drawSource.addFeatures([new ol.Feature(roadLine)]);
+                    drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+            var featureRequest2 = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ['od'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.intersects("endpoint",  evt.feature.getGeometry())
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest2)
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+
+                }else{
+                    drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+
+        })
+    }
+    function searchByCircle() {
+        if(draw){
+            map.removeInteraction(draw);
+        }
+        draw = new ol.interaction.Draw({
+            source: drawSource,
+            type: 'Circle',
+            geometryName: 'geometry'
+        });
+        map.addInteraction(draw);
+        draw.on('drawend', function (evt) {
+            if(drawVector.getKeys().length>0){
+                map.removeLayer(drawVector);
+                drawSource.clear();
+            }
+            var polygon=new ol.geom.Polygon.fromCircle(evt.feature.getGeometry())
+            var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ['origin'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.intersects("endpoint", polygon)
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest)
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                    alert('未查询到数据！')
+                }else{
+                    var res=new Array();
+                    var p=new Array();
+                    var n=features.length;
+                    for(var i=0;i<n;i++){
+                        var g= features[i].getGeometry();
+                        p[i] = new Object();
+                        var properties = features[i].getProperties();
+                        console.log(features[i].getGeometry());
+                        p[i].x = features[i].getGeometry().getCoordinates()[0];
+                        p[i].y = features[i].getGeometry().getCoordinates()[1];
+                        p[i].tj = false;
+                    }
+                    var points=Graham_scan(p,res,n);
+                    var poin=[];
+                    for(var j=0;j<points.length;j++)
+                    {
+                        var a=new Array();
+                        a[0]=points[j].x;
+                        a[1]=points[j].y;
+                        poin.push(a)
+                    }
+                    poin.push(poin[0])
+                    var  roadLine = new ol.geom.Polygon( [poin]);
+                    drawSource.addFeatures([new ol.Feature(roadLine)]);
+                    drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+            var featureRequest2 = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ['od'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.intersects("endpoint", polygon)
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest2)
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                }else{
+                    drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+        })
+    }
+    var map = new ol.Map({
+        target: 'map',                          // 关联到对应的div容器
+        layers: [
+            new ol.layer.Tile({                 // 瓦片图层
+                source: new ol.source.OSM()     // OpenStreetMap数据源
+            })
+        ],
+        view: new ol.View({                     // 地图视图
+            projection: 'EPSG:4326',
+            center: [114.08,22.54],
+            zoom: 12
+        })
+    });
+    var tempSource = new ol.source.Vector();
+    var featureOverlay = new ol.layer.Vector({
+        source: tempSource,
+    });
+    function queryFeature(){
+        if(draw){
+            map.removeInteraction(draw);
+        }
+        if(selectInteration){
+            map.removeInteraction(selectInteration);
+        }
+        if(modifyInteration){
+            map.removeInteraction(modifyInteration);
+        }
+        if(drawInteraction){
+            map.removeInteraction(drawInteraction);
+        }
+        console.log("shabizhangkai");
+        selectInteration = new ol.interaction.Select();
+        map.addInteraction(selectInteration);
+        selectInteration.on('select', function (e) {
+            if (selectInteration.getFeatures().getLength() == 0) {
+                console.log('null');
+                document.getElementById('featureInfo').style.display='none';
+            } else {
+                var feature = e.target.getFeatures().getArray()[0];
+                var keys = feature.getKeys();
+                var properties = feature.getProperties();
+                var content=document.getElementById('featureInfo');
+                content.style.display='block';
+                var table;
+                var objectlist=['startpoint','endpoint','geometry'];
+                table+='<table id="simple-table" class="table  table-bordered table-hover">' +'<thead>'+'<tr>';
+                for(var i=0;i<keys.length;i++){
+                    if (objectlist.indexOf(keys[i])<0){
+                        table += '<th>' + keys[i] + '</th>';
+                    }
+                }
+                table+='</tr>'+'</thead>'+'<tbody>'+'<tr>';
+                for (var i = 0; i < keys.length; i++) {
+                    if (objectlist.indexOf(keys[i])<0) {
+                        table += '<th>' + properties[keys[i]] + '</th>';
+                        console.log(properties[keys[i]]);
+                    }
+                }
+                table+='</tr>'+'</tbody>'+'</table>';
+                content.innerHTML=table;
+                console.log(content.innerHTML);
+            }
+        })
+    }
+    function multiply(p0,p1,p2){
+        return((p1.x-p0.x)*(p2.y-p0.y)-(p2.x-p0.x)*(p1.y-p0.y));
+    }   //相乘
+    function distance_no_sqrt(p1,p2) {
+        //return(sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y)));
+        return((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y));
+    }
+    function Graham_scan(pointSet,ch,n){
+        // 这里会修改pointSet
+        var i,j,k=0,top=2;
+        var tmp=new Object();
+        // 找到一个基点，基本就是保证最下面最左面的点
+        for(i=1;i<n;i++){
+            if( (pointSet[i].y<pointSet[k].y) ||
+                ( (pointSet[i].y==pointSet[k].y) && (pointSet[i].x<pointSet[k].x) )
+            ){
+                k=i;
+            }
+        }
+        //这个点作为基点
+        tmp=pointSet[0];
+        pointSet[0]=pointSet[k];
+        pointSet[k]=tmp;
+
+        use=n;
+        for (i=1;i<use-1;i++){
+            k=i;
+            for (j=i+1;j<use;j++){
+                var direct=multiply(pointSet[0],pointSet[k],pointSet[j]);
+                if(direct>0){
+                    k=j;
+                }else if(direct==0){
+                    // k j 同方向
+                    var dis=distance_no_sqrt(pointSet[0],pointSet[j])-distance_no_sqrt(pointSet[0],pointSet[k]);
+                    use--; // 也就是不要了
+                    if(dis>0){
+                        // 保留j
+                        // 把 k 就不要了
+                        pointSet[k]=pointSet[j];
+                        pointSet[j]=pointSet[use];
+                        j--;
+                    }else{
+                        tmp=pointSet[use];
+                        pointSet[use]=pointSet[j];
+                        pointSet[j]=tmp;
+                    }
+                }
+            }
+            tmp=pointSet[i];
+            pointSet[i]=pointSet[k];
+            pointSet[k]=tmp;
+        }
+
+        ch.push(pointSet[0]);
+        ch.push(pointSet[1]);
+        ch.push(pointSet[2]);
+        for (i=3;i<use;i++){
+            while ( !(multiply(pointSet[i],ch[top-1],ch[top]) < 0 ) ){
+                top--;
+                ch.pop();
+            }
+            top++;
+            ch.push(pointSet[i]);
+        }
+        return ch;
+    }
+</script>
+</body>
+</html>

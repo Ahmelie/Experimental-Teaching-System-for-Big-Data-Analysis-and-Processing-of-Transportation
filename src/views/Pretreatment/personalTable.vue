@@ -1,36 +1,32 @@
 <template>
-  <div class="app-container">
-    <aside>
-      The guide page is useful for some people who entered the project for the first time. You can briefly introduce the
-      features of the project. Demo is based on
-      <a href="https://github.com/kamranahmedse/driver.js" target="_blank">driver.js.</a>
-    </aside>
-    <el-button icon="el-icon-question" type="primary" @click.prevent.stop="guide">
-      Show Guide
-    </el-button>
-  </div>
+  <!-- <div class="app-container"> -->
+  <iframe src="pretreatment/personalTable.html" scrolling="no" style="width: 100%;height: 656px;" frameborder="0" />
+  <!-- </div> -->
 </template>
 
 <script>
-import Driver from 'driver.js' // import driver.js
-import 'driver.js/dist/driver.min.css' // import driver.js css
-import steps from './steps'
+import { SearchBar } from '@/layout/components'
+import 'ol/ol.css'
 
 export default {
-  name: 'Guide',
+  name: 'RearsonalTable',
+  components: {
+    SearchBar
+  },
   data() {
     return {
-      driver: null
+      map: null
     }
   },
   mounted() {
-    this.driver = new Driver()
   },
   methods: {
-    guide() {
-      this.driver.defineSteps(steps)
-      this.driver.start()
-    }
+
   }
 }
 </script>
+<style scoped>
+iframe{
+  padding: 10px 15px;
+}
+</style>

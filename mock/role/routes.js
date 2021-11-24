@@ -112,11 +112,20 @@ const constantRoutes = [
         }
       },
       {
-        path: 'role',
-        component: 'views/permission/role',
-        name: 'RolePermission',
+        path: 'personalTable',
+        component: 'views/Pretreatment/personalTable',
+        name: 'personalTable',
         meta: {
-          title: 'Role Permission',
+          title: '个体连续轨迹提取',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'ODTable',
+        component: 'views/Pretreatment/ODTable',
+        name: 'ODTable',
+        meta: {
+          title: 'OD出行起讫点生成',
           roles: ['admin']
         }
       }
@@ -200,28 +209,28 @@ const constantRoutes = [
     },
     children: [
       {
-        path: 'page',
-        component: 'views/permission/page',
-        name: 'PagePermission',
+        path: 'source',
+        component: 'views/Analysis/source',
+        name: 'source',
         meta: {
-          title: 'Page Permission',
+          title: '基于个体的交通流溯源分析',
           roles: ['admin']
         }
       },
       {
-        path: 'directive',
-        component: 'views/permission/directive',
-        name: 'DirectivePermission',
+        path: 'outflowRange',
+        component: '/views/Analysis/outflowRange',
+        name: 'outflowRange',
         meta: {
-          title: 'Directive Permission'
+          title: '基于源的流向范围分析'
         }
       },
       {
-        path: 'role',
-        component: 'views/permission/role',
-        name: 'RolePermission',
+        path: 'inflowRange',
+        component: '/views/Analysis/inflowRange',
+        name: 'inflowRange',
         meta: {
-          title: 'Role Permission',
+          title: '基于汇的流入范围分析n',
           roles: ['admin']
         }
       }

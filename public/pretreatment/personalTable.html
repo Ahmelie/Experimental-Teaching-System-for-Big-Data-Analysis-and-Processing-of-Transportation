@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+</head>
+<style>
+    
+#tab {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#tab td, #tab th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#tab tr:nth-child(even){background-color: #f2f2f2;}
+
+#tab tr:hover {background-color: #ddd;}
+
+#tab th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #7ab49a;
+  color: white;
+}
+</style>
+<body>
+        <label>车牌号</label>
+        <input class="landkey" type="text" id='vehiclenum' placeholder="">
+        <button onclick="searchByPropertysubtrip()">子轨迹提取</button>
+        <button onclick="searchByPropertyOD()">OD点生成</button>
+   
+    <div id="menu3sub" style="height:600px;overflow:auto;">
+        <table border="1" id="tab">
+            <tr>
+                <th>id</th>
+                <th>vehiclenum</th>
+
+                <th>startpoint</th>
+                <th>endpoint</th>
+                <th>starttime</th>
+                <th>endtime</th>
+
+            </tr>
+        </table>
+    </div>
+<style>
+    #popup {
+        background-color: #088;
+    }
+</style>
+<script>
+
+
+    function searchByPropertysubtrip() {
+     
+
+        var vehiclenum=document.getElementById("vehiclenum").value;
+        var featureRequest = new ol.format.WFS().writeGetFeature({
+            srsName: 'EPSG:4326',//坐标系统
+            featureNS: 'http://47.98.155.117/postgis',//命名空间 URI
+            featurePrefix: 'postgis',//工作区名称
+            featureTypes: ['subtrip'],//查询图层，可以是同一个工作区下多个图层，逗号隔开
+            outputFormat: 'application/json',
+            filter: ol.format.filter.like("vehiclenum", "*"+vehiclenum+"*"),
+        });
+
+        fetch('http://120.26.74.21:8080/geoserver/wfs', {
+            method: 'POST',
+            body: new XMLSerializer().serializeToString(featureRequest),
+            // mode: 'no-cors'
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            //console.log(json);
+            var features = new ol.format.GeoJSON().readFeatures(json);
+            console.log(features)
+            if (features.length == 0) {
+                alert('未查询到数据！')
+            } else {
+               // drawSource.addFeatures(features);
+               // map.addLayer(drawVector);
+               // map.getView().fit(drawSource.getExtent());
+                $(document).ready(function() {
+                    var s = "";
+                    for(var i = 0; i < features.length; i++) {
+                        s = "<tr><td>" + features[i].values_.id + "</td><td>" + features[i].values_.vehiclenum +  "</td><td>" + features[i].values_.startpoint.coordinates +"</td><td>" + features[i].values_.endpoint.coordinates +"</td><td>" + features[i].values_.starttime +"</td><td>" + features[i].values_.endtime +"</td></tr>";
+                        $("#tab").append(s);
+                    }
+                });
+
+            }
+        });
+    }
+
+
+
+    function searchByPropertyOD() {
+        var vehiclenum=document.getElementById("vehiclenum").value;
+        var featureRequest = new ol.format.WFS().writeGetFeature({
+            srsName: 'EPSG:4326',//坐标系统
+            featureNS: 'http://47.98.155.117/postgis',//命名空间 URI
+            featurePrefix: 'postgis',//工作区名称
+            featureTypes: ['od'],//查询图层，可以是同一个工作区下多个图层，逗号隔开
+            outputFormat: 'application/json',
+            filter: ol.format.filter.like("vehiclenum", "*"+vehiclenum+"*"),
+        });
+
+        fetch('http://120.26.74.21:8080/geoserver/wfs', {
+            method: 'POST',
+            body: new XMLSerializer().serializeToString(featureRequest),
+            // mode: 'no-cors'
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            //console.log(json);
+            var features = new ol.format.GeoJSON().readFeatures(json);
+            console.log(features)
+            if (features.length == 0) {
+                alert('未查询到数据！')
+            } else {
+              //  drawSource.addFeatures(features);
+               // map.addLayer(drawVector);
+              //  map.getView().fit(drawSource.getExtent());
+                $(document).ready(function() {
+                    var s = "";
+                    for(var i = 0; i < features.length; i++) {
+                        s = "<tr><td>" + features[i].values_.id + "</td><td>" + features[i].values_.vehiclenum +  "</td><td>" + features[i].values_.startpoint.coordinates +"</td><td>" + features[i].values_.endpoint.coordinates +"</td><td>" + features[i].values_.starttime +"</td><td>" + features[i].values_.endtime +"</td></tr>";
+                        $("#tab").append(s);
+                    }
+                });
+
+            }
+        });
+    }
+    function uploadPic() {
+          var form = document.getElementById('upload'),
+                formData = new FormData(form);
+            $.ajax({
+                url:"http://120.26.74.21:8080/geoserver/wfs",
+                type:"post",
+                data:formData,
+                processData:false,
+                contentType:false,
+                success:function(res){
+                    if(res){
+                        alert("上传成功！");
+                    }
+                    console.log(res);
+                    $("#pic").val("");
+                    $(".showUrl").html(res);
+                    $(".showPic").attr("src",res);
+                },
+                error:function(err){
+                    alert("导入数据成功！",err);
+                }
+
+            })
+
+
+    }
+    function resetting(){
+
+        drawSource.clear();
+    }
+
+
+
+</script>
+</body>
+</html>

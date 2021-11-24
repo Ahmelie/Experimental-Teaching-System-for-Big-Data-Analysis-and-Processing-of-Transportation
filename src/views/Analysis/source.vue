@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <iframe src="pretreatment/ODTable.html" scrolling="no" style="width: 100%;height: 656px;" frameborder="0" />
+    <iframe src="analysis/source.html" scrolling="no" style="width: 100%;height: 656px;" frameborder="0" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@ import { SearchBar } from '@/layout/components'
 import 'ol/ol.css'
 
 export default {
-  name: 'ODTable',
+  name: 'Source',
   components: {
     SearchBar
   },
@@ -27,6 +27,6 @@ export default {
 </script>
 <style scoped>
 iframe{
-  padding: 10px 15px;
+  /* padding: 10px; */
 }
 </style>

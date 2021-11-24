@@ -101,7 +101,7 @@ export default {
   }
   .tittle{
     // text-align: left;
-    padding-left: 10px;
+    padding-left: 15px;
     height: 80px;
     line-height: 80px;
     font-size: 33px;
