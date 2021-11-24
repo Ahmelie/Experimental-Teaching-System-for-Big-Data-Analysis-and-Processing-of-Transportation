@@ -70,19 +70,19 @@ export const constantRoutes = [
     component: () => import('@/views/error-page/401'),
     hidden: true
   },
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: '主页', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: 'Dashboard',
+  //       meta: { title: '主页', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/documentation',
   //   component: Layout,
@@ -147,24 +147,24 @@ export const constantRoutes = [
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
-        meta: {
-          title: '各类交通出行原始轨迹数据导入',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: '轨迹异常点剔除'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
+      // {
+      //   path: 'page',
+      //   component: () => import('@/views/permission/page'),
+      //   name: 'PagePermission',
+      //   meta: {
+      //     title: '各类交通出行原始轨迹数据导入',
+      //     roles: ['admin'] // or you can only set roles in sub nav
+      //   }
+      // },
+      // {
+      //   path: 'directive',
+      //   component: () => import('@/views/permission/directive'),
+      //   name: 'DirectivePermission',
+      //   meta: {
+      //     title: '轨迹异常点剔除'
+      //     // if do not set roles, means: this page does not require permission
+      //   }
+      // },
       {
         path: 'personalTable',
         component: () => import('@/views/Pretreatment/personalTable'),
@@ -185,62 +185,32 @@ export const constantRoutes = [
       }
     ]
   },
-
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/dashboard/index'),
+  //       name: 'Dashboard',
+  //       meta: { title: '主页', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   {
-    path: '/Search',
+    path: '/',
     component: Layout,
-    redirect: '/Search/index',
+    redirect: '/Search',
     children: [
       {
-        path: 'index',
+        path: 'Search',
         component: () => import('@/views/Search/index'),
         name: 'Search',
         meta: { title: '交通出行数据时空查询模块', icon: 'example', noCache: true }
       }
     ]
   },
-
-  // {
-  //   path: '/Search',
-  //   component: Layout,
-  //   redirect: '/Search/index',
-  //   alwaysShow: true, // will always show the root menu
-  //   name: 'Search',
-  //   meta: {
-  //     title: '交通出行数据时空查询模块',
-  //     icon: 'example',
-  //     roles: ['admin', 'editor'] // you can set roles in root nav
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: () => import('@/views/permission/page'),
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'Page Permission',
-  //         roles: ['admin'] // or you can only set roles in sub nav
-  //       }
-  //     },
-  //     {
-  //       path: 'directive',
-  //       component: () => import('@/views/permission/directive'),
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'Directive Permission'
-  //         // if do not set roles, means: this page does not require permission
-  //       }
-  //     },
-  //     {
-  //       path: 'role',
-  //       component: () => import('@/views/permission/role'),
-  //       name: 'RolePermission',
-  //       meta: {
-  //         title: 'Role Permission',
-  //         roles: ['admin']
-  //       }
-  //     }
-  //   ]
-  // },
   {
     path: '/Analysis',
     component: Layout,
@@ -254,7 +224,7 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: 'page',
+        path: 'source',
         component: () => import('@/views/Analysis/source'),
         name: 'PagePermission',
         meta: {
@@ -263,7 +233,7 @@ export const constantRoutes = [
         }
       },
       {
-        path: 'directive',
+        path: 'outflowRange',
         component: () => import('@/views/Analysis/outflowRange'),
         name: 'DirectivePermission',
         meta: {
@@ -272,7 +242,7 @@ export const constantRoutes = [
         }
       },
       {
-        path: 'role',
+        path: 'inflowRange',
         component: () => import('@/views/Analysis/inflowRange'),
         name: 'RolePermission',
         meta: {

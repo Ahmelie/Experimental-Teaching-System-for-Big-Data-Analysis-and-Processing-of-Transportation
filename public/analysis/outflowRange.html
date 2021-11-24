@@ -16,35 +16,47 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
 </head>
+<style>
+    #menu{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    z-index: 1000;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: rgba(179, 199, 185, 0.8);
+    }
+    label{
+        font-weight: 400;
+    }
+    #featureInfo{
+        background-color: #fff;
+    }
+    .table-bordered{
+        border: 2px solid #ddd;
+    }
+</style>
 <body>
 <div class="row">
-    <div class="col-xs-4">
-        <div id="menu" style="position:absolute;top:50px;left:80px;width:300px;height:150px;z-index:99999;border: 1px solid #ccc; padding: 1em;background-color:rgba(245,245,245,0.6)">
-            <div align='center' style="font-size:20px;font-weight:bold;background-color:rgba(245,245,245,0.6);height:30px">
-                <label style="vertical-align:center">
-                    基于源的流向范围分析
-                </label>
-            </div>
-            <div style="height:10px">
-            </div>
-            <ul>
+        <div id="menu" >
+            <div>
                     <input name="searchtype" value="polygon" id="polygonSearch"  type="radio">
                     <label for="polygonSearch">多边形搜索</label>
-                </li>
-                <li>
+                </div>
+                <div>
                     <input name="searchtype" value="circle" id="circleByStartPoint"  type="radio">
                     <label for="polygonSearch">圆形搜索</label>
-                </li>
-                <li>
+                </div>
+                <div>
                     <input name="searchtype" value="property" id="propertySearch"  type="radio">
                     <label for="polygonSearch">属性查询</label>
-                </li>
-            </ul>
+                </div>
+                <div id="featureInfo" ></div>
+
         </div>
-    </div>
-    <div id="map" class="map" style="height:700px"></div>
-    <div id="scalebar"></div>
-    <div   id="featureInfo" style="background-color:white;position:absolute; right:100px; top:70px; z-index:999;overflow-x: auto; overflow-y: auto; height: 100px; width:500px; display: none">
+    <div id="map" class="map" style="height:700px">
     </div>
 </div>
 <script>
@@ -344,7 +356,7 @@
                 content.style.display='block';
 
                 //title.style.display = 'block';
-                var table;
+                var table='';
                 var objectlist=['startpoint','endpoint','geometry'];
                 table+='<table id="simple-table" class="table  table-bordered table-hover">' +'<thead>'+'<tr>';
                 for(var i=0;i<keys.length;i++){

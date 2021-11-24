@@ -132,13 +132,26 @@ const constantRoutes = [
     ]
   },
 
+  // {
+  //   path: '',
+  //   component: 'layout/Layout',
+  //   redirect: 'dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: 'views/dashboard/index',
+  //       name: 'Dashboard',
+  //       meta: { title: '主页', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   {
-    path: 'Search',
+    path: '',
     component: 'layout/Layout',
-    redirect: '/Search/index',
+    redirect: '/Search',
     children: [
       {
-        path: 'index',
+        path: 'Search',
         component: 'views/Search/index',
         name: 'Search',
         meta: { title: '交通出行数据时空查询模块', icon: 'example', noCache: true }
