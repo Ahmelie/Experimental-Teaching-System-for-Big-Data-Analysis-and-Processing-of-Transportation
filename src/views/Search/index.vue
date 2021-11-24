@@ -1,17 +1,13 @@
 <template>
-  <div class="app-container">
+  <div>
     <iframe src="search/index.html" scrolling="no" style="width: 100%;height: 656px;" frameborder="0" />
   </div>
 </template>
 
 <script>
-import { SearchBar } from '@/layout/components'
-import 'ol/ol.css'
-
 export default {
   name: 'Search',
   components: {
-    SearchBar
   },
   data() {
     return {
@@ -25,3 +21,5 @@ export default {
   }
 }
 </script>
+<style >
+</style>

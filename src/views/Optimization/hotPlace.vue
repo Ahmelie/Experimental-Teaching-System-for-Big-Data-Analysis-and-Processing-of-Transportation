@@ -1,8 +1,5 @@
 <template>
-  <div class="app-container">
-
-    <div id="map" class="map" style="height:700px" />
-  </div>
+  <div id="map" class="map" style="height:700px" />
 </template>
 
 <script>

@@ -1,9 +1,9 @@
 <template>
-  <div class="app-container">
+  <div>
     <search-bar :type="2" :start-point="startPoint" :end-point="endPoint" @changeChoose="changeChoose" @submit="submit" />
     <div id="container" class="map" style="height:700px" />
-
-  </div></template>
+  </div>
+</template>
 <script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=gdksno2qBMGpegDlZ7Ycqos7hTTZ7ZIT"></script>
 <script>
 

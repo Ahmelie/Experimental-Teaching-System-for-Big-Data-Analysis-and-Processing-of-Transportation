@@ -1,13 +1,13 @@
 <template>
   <div class="app-container">
-    <iframe src="pretreatment/personalTable.html" scrolling="no" style="width: 100%;height: 636px;" frameborder="0" />
+    <iframe src="pretreatment/ODTable.html" scrolling="no" style="width: 100%;height: 636px;" frameborder="0" />
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'RearsonalTable',
+  name: 'ODTable',
   components: {
   },
   data() {

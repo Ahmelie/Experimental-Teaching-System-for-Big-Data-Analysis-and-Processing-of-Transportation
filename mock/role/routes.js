@@ -70,19 +70,19 @@ const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/Pretreatment',
-    component: 'layout/Layout',
-    redirect: '/Pretreatment/index',
-    children: [
-      {
-        path: 'index',
-        component: 'views/Pretreatment/index',
-        name: 'Pretreatment',
-        meta: { title: '交通出行数据轨迹预处理模块', icon: 'Pretreatment', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/Pretreatment',
+  //   component: 'layout/Layout',
+  //   redirect: '/Pretreatment/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: 'views/Pretreatment/index',
+  //       name: 'Pretreatment',
+  //       meta: { title: '交通出行数据轨迹预处理模块', icon: 'Pretreatment', noCache: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/Pretreatment',
     component: 'layout/Layout',
@@ -95,20 +95,20 @@ const constantRoutes = [
     },
     children: [
       {
-        path: 'page',
-        component: 'views/permission/page',
-        name: 'PagePermission',
+        path: 'uploadData',
+        component: 'views/Pretreatment/uploadData',
+        name: 'uploadData',
         meta: {
-          title: 'Page Permission',
+          title: '导入原始轨迹数据',
           roles: ['admin']
         }
       },
       {
-        path: 'directive',
-        component: 'views/permission/directive',
-        name: 'DirectivePermission',
+        path: 'clearOutlier',
+        component: 'views/Pretreatment/clearOutlier',
+        name: 'clearOutlier',
         meta: {
-          title: 'Directive Permission'
+          title: '轨迹异常点剔除'
         }
       },
       {

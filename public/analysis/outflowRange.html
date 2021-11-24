@@ -39,26 +39,22 @@
     }
 </style>
 <body>
-<div class="row">
-        <div id="menu" >
-            <div>
-                    <input name="searchtype" value="polygon" id="polygonSearch"  type="radio">
-                    <label for="polygonSearch">多边形搜索</label>
-                </div>
-                <div>
-                    <input name="searchtype" value="circle" id="circleByStartPoint"  type="radio">
-                    <label for="polygonSearch">圆形搜索</label>
-                </div>
-                <div>
-                    <input name="searchtype" value="property" id="propertySearch"  type="radio">
-                    <label for="polygonSearch">属性查询</label>
-                </div>
-                <div id="featureInfo" ></div>
-
-        </div>
-    <div id="map" class="map" style="height:700px">
+<div id="menu" >
+    <div>
+        <input name="searchtype" value="polygon" id="polygonSearch"  type="radio">
+        <label for="polygonSearch">多边形搜索</label>
     </div>
+    <div>
+        <input name="searchtype" value="circle" id="circleByStartPoint"  type="radio">
+        <label for="polygonSearch">圆形搜索</label>
+    </div>
+    <div>
+        <input name="searchtype" value="property" id="propertySearch"  type="radio">
+        <label for="polygonSearch">属性查询</label>
+    </div>
+    <div id="featureInfo" ></div>
 </div>
+<div id="map" class="map" style="height:700px"> </div>
 <script>
     var drawInteraction;
     var selectInteration;

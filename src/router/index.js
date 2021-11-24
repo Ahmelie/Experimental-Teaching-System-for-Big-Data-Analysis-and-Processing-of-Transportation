@@ -142,7 +142,7 @@ export const constantRoutes = [
     alwaysShow: true, // will always show the root menu
     name: 'Pretreatment',
     meta: {
-      title: '交通出行数据轨迹预处理模块',
+      title: '交通出行轨迹数据预处理',
       icon: 'bug',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
@@ -165,6 +165,24 @@ export const constantRoutes = [
       //     // if do not set roles, means: this page does not require permission
       //   }
       // },
+      {
+        path: 'uploadData',
+        component: () => import('@/views/Pretreatment/uploadData'),
+        name: 'uploadData',
+        meta: {
+          title: '导入原始轨迹数据',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'clearOutlier',
+        component: () => import('@/views/Pretreatment/clearOutlier'),
+        name: 'clearOutlier',
+        meta: {
+          title: '轨迹异常点剔除',
+          roles: ['admin']
+        }
+      },
       {
         path: 'personalTable',
         component: () => import('@/views/Pretreatment/personalTable'),
@@ -207,7 +225,7 @@ export const constantRoutes = [
         path: 'Search',
         component: () => import('@/views/Search/index'),
         name: 'Search',
-        meta: { title: '交通出行数据时空查询模块', icon: 'example', noCache: true }
+        meta: { title: '交通出行数据时空查询', icon: 'example', noCache: true }
       }
     ]
   },
@@ -218,7 +236,7 @@ export const constantRoutes = [
     alwaysShow: true, // will always show the root menu
     name: 'Analysis',
     meta: {
-      title: '交通流流向分析模块',
+      title: '交通流OD流向分析',
       icon: 'international',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
@@ -259,7 +277,7 @@ export const constantRoutes = [
     alwaysShow: true, // will always show the root menu
     name: 'Optimization',
     meta: {
-      title: '交通设施资源优化模块',
+      title: '出行经验学习推荐',
       icon: 'guide',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
@@ -286,7 +304,7 @@ export const constantRoutes = [
         component: () => import('@/views/Optimization/hotRoad'),
         name: 'RolePermishotRoadsion',
         meta: {
-          title: '热点路段',
+          title: '热点路段分析',
           roles: ['admin']
         }
       },
@@ -295,7 +313,7 @@ export const constantRoutes = [
         component: () => import('@/views/Optimization/hotPlace'),
         name: 'hotPlace',
         meta: {
-          title: '热点场所',
+          title: '热点场所分析',
           roles: ['admin']
         }
       }

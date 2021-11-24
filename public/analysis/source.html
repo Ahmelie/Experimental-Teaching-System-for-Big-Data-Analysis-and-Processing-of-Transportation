@@ -14,8 +14,6 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
 </head>
-<body>
-
 <style>
     #menu{
     position: absolute;
@@ -38,25 +36,23 @@
         border: 2px solid #ddd;
     }
 </style>
-<div class="row">
-        <div id="menu" >
-                <div>
-                    <input name="searchtype" value="point" id="point"  type="radio">
-                    <label for="point">点溯源分析</label>
-                </div>
-                <div>
-                    <input name="searchtype" value="trace" id="line"  type="radio">
-                    <label for="line">线溯源分析</label>
-                </div>
-                <div>
-                    <input name="searchtype" value="property" id="propertySearch"  type="radio">
-                    <label for="propertySearch">属性查询</label>
-                </div>
-            <div id="featureInfo" >
-            </div>
-        </div>
-    <div id="map" class="map" style="height:700px"></div>
+<body>
+<div id="menu" >
+    <div>
+        <input name="searchtype" value="point" id="point"  type="radio">
+        <label for="point">点溯源分析</label>
+    </div>
+    <div>
+        <input name="searchtype" value="trace" id="line"  type="radio">
+        <label for="line">线溯源分析</label>
+    </div>
+    <div>
+        <input name="searchtype" value="property" id="propertySearch"  type="radio">
+        <label for="propertySearch">属性查询</label>
+    </div>
+    <div id="featureInfo" ></div>
 </div>
+<div id="map" class="map" style="height:700px"></div>
 <script>
     var drawInteraction;
     var selectInteration;
