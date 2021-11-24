@@ -1,15 +1,852 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="renderer" content="webkit">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= webpackConfig.name %></title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>根据属性查询</title>
+
+  <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css">
+
+  <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+
+
+</head>
+<body>
+<div class="row">
+
+  <!-- PAGE CONTENT BEGINS -->
+  <div class="col-xs-4">
+    <!--        <div  id="landForm" >-->
+    <!--            <div class="widget-box" >-->
+    <div id="menu"
+         style="position:absolute;top:50px;left:80px;width:300px;height:500px;z-index:99999;border: 1px solid #ccc; padding: 1em;background-color:rgba(245,245,245,0.6)">
+      <ul>
+        <li>
+          <label>特征选择:</label>
+          <input name="choice" value="point" id="point" type="radio" checked="checked"><label>点</label>
+          <input name="choice" value="line" id="line" type="radio"><label>线</label>
+          <input name="choice" value="od" id="od" type="radio"><label>od</label>
+        </li>
+        <li>
+          <label>车牌号</label>
+          <input value="B001" class="landkey" type="text" id='vehiclenum' placeholder="">
+        </li>
+        <li>
+          <button onclick="searchByProperty()">查询</button>
+        </li>
+        <li>
+          <input name="searchtype" value="point" id="nearbySearch" type="radio">
+          <label for="nearbySearch">周边搜索</label>
+          <select id="radius" οnchange="setSize(parseFloat(this.value))" style="width:100px">
+            <option name="radius" value="0.1">100</option>
+            <option name="radius" value="0.2">200</option>
+            <option name="radius" value="0.3">300</option>
+          </select>
+          <label>以内</label>
+        </li>
+        <li>
+          <input name="searchtype" value="polygon" id="polygonSearch" type="radio">
+          <label for="polygonSearch">多边形搜索</label>
+        </li>
+        <li>
+          <input name="searchtype" value="circle" id="circleSearch" type="radio">
+          <label for="polygonSearch">圆形搜索</label>
+        </li>
+        <li>
+          <input name="searchtype" value="rectangle" id="rectangleSearch" type="radio">
+          <label for="polygonSearch">矩形搜索</label>
+        </li>
+        <li>
+          <label>时间查询</label></li>
+        <li><label>开始时间</label><input value="2011/11/8 7:00" class="landkey" type="text" id='starttime'
+                                      placeholder=""></li>
+        <li><label>结束时间</label><input value="2011/11/8 7:01" class="landkey" type="text" id='endtime'
+                                      placeholder=""></li>
+
+        <li>
+          <button onclick="searchTime()">时间查询</button>
+        </li>
+        <li>
+          <label>车牌号和空间条件</label><input class="landkey" type="radio" value='idandspace' name="combine"
+                                        checked="checked">
+        </li>
+        <li>
+          <label>车牌号和时间条件</label><input class="landkey" type="radio" value='idandtime' name="combine">
+        </li>
+        <li>
+          <label>时间和空间条件</label><input class="landkey" type="radio" value='timeandspace' name="combine">
+        </li>
+        <li>
+          <label>id和时间和空间条件</label><input class="landkey" type="radio" value='idandtimeandspace'
+                                          name="combine">
+          <button onclick="searchCombine()">联合查询</button>
+        </li>
+
+      </ul>
+      <!--        <label class="checkbox"><input type="checkbox" id="geodesic" />使用大地测量</label>-->
+    </div>
+    <!--            </div>-->
+    <!--        </div>-->
+  </div>
+  <div id="map" class="map" style="height:700px"></div>
+  <div id="scalebar"></div>
+
+  <div id="menu2"
+       style="display:none;position:absolute;top:50px;left:900px;width:600px;height:80px;z-index:99999;border: 1px solid #ccc; padding: 1em;background-color:rgba(245,245,245,0.6)">
+    <table border="1">
+      <tr>
+        <th id="id">id</th>
+        <th id="vehiclenumber">vehiclenum</th>
+        <th id="gpsdate">starttime</th>
+        <th id="maplon">map_lon</th>
+        <th id="maplat">map_lat</th>
+        <th id="direction">direction</th>
+        <th id="gpsspeed">gps_speed</th>
+        <th id="emptyload">empty_load</th>
+      </tr>
+      <tr>
+        <td style="width:70px">&nbsp;</td>
+        <td id="vehiclenumberval">&nbsp;</td>
+        <td id="gpsspeedval">&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- PAGE CONTENT ENDS -->
+
+</div><!-- /.row -->
+
+<script>
+
+  var drawInteraction;
+  var selectInteration;
+  var modifyInteration;
+  var feature;
+  var draw;
+  var selectSource = new ol.source.Vector();
+  var selectVector = new ol.layer.Vector({
+    source: selectSource,
+    style: hightStyle,
+  });
+  var drawSource = new ol.source.Vector();
+  var hightStyle = new ol.style.Style({
+    //填充色
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 0.2)'
+    }),
+    //边线颜色
+    stroke: new ol.style.Stroke({
+      color: '#2894FF',
+      width: 3
+    }),
+    //形状
+    image: new ol.style.Circle({
+      radius: 7,
+      fill: new ol.style.Fill({
+        color: '#2894FF'
+      })
+    })
+  })
+  var drawVector = new ol.layer.Vector({
+    source: drawSource,
+    style: hightStyle
+  });
+  $('input:radio[name="searchtype"]').change(function () {
+    var checkValue = $('input:radio[name="searchtype"]:checked').val();
+
+
+    //console.log(checkValue);
+    if (checkValue == 'point') {
+      searchPoint();
+    } else if (checkValue == 'polygon') {
+      searchPolygon();
+    } else if (checkValue == 'circle') {
+      searchCircle();
+    } else if (checkValue == 'rectangle') {
+      searchRectangle();
+    }
+  });
+
+  function searchRectangle() {
+    let choice = $('[name=choice]:checked').val()
+    var ft = []
+    if (choice == 'point')
+      ft = ['taxi']
+    else if (choice == 'line')
+      ft = ['subtrip']
+    else if (choice == 'od')
+      ft = ['od']
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Circle',
+      freehand: false,
+      geometryFunction: ol.interaction.Draw.createBox()
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      var polygon = evt.feature.getGeometry()
+
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ft,
+        outputFormat: 'application/json',
+        filter: ol.format.filter.intersects("geom", polygon)
+      });
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+
+    })
+  }
+
+  function getRadius() {
+    return $("#radius").val();
+  }
+
+  function searchPoint() {
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    var radius = getRadius();
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Point',
+      geometryName: 'geometry'
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      var metersPerUnit = map.getView().getProjection().getMetersPerUnit();
+      var circleRadius = parseFloat(radius) / metersPerUnit;
+      console.log(evt.feature.getGeometry().getCoordinates());
+      var circle = new ol.geom.Circle(evt.feature.getGeometry().getCoordinates(), circleRadius);
+      var polygon = new ol.geom.Polygon.fromCircle(circle);//转换为polygon，用于空间查询
+      drawSource.addFeatures(circle);
+      //polygon.set('id',1);
+      //selectSource.addFeature(polygon);
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ['od'],
+        outputFormat: 'application/json',
+        filter: ol.format.filter.intersects("geom", polygon)
+
+
+      });
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+        // mode: 'no-cors'
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+    });
+
+  };
+
+  function searchPolygon() {
+    let choice = $('[name=choice]:checked').val()
+    var ft = []
+    if (choice == 'point')
+      ft = ['taxi']
+    else if (choice == 'line')
+      ft = ['subtrip']
+    else if (choice == 'od')
+      ft = ['od']
+    if (drawVector.getKeys().length > 0) {
+      map.removeLayer(drawVector);
+      drawSource.clear();
+    }
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Polygon',
+      geometryName: 'geometry'
+    });
+
+
+    map.addInteraction(draw);
+    // var tt
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      //alert("aaaa")
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ft,
+        outputFormat: 'application/json',
+        filter: ol.format.filter.intersects("geom", evt.feature.getGeometry())
+      });
+
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+        // mode: 'no-cors'
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+
+    })
+  }
+
+  function searchCircle() {
+    let choice = $('[name=choice]:checked').val()
+    var ft = []
+    if (choice == 'point')
+      ft = ['taxi']
+    else if (choice == 'line')
+      ft = ['subtrip']
+    else if (choice == 'od')
+      ft = ['od']
+    if (drawVector.getKeys().length > 0) {
+      map.removeLayer(drawVector);
+      drawSource.clear();
+    }
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Circle',
+      geometryName: 'geometry'
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      var polygon = new ol.geom.Polygon.fromCircle(evt.feature.getGeometry())
+
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ft,
+        outputFormat: 'application/json',
+        filter: ol.format.filter.intersects("geom", polygon)
+      });
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+        // mode: 'no-cors'
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+
+    })
+  }
+
+
+  var map = new ol.Map({
+    target: 'map',                          // 关联到对应的div容器
+    layers: [
+      new ol.layer.Tile({                 // 瓦片图层
+        source: new ol.source.OSM()     // OpenStreetMap数据源
+      })
+    ],
+    view: new ol.View({                     // 地图视图
+      projection: 'EPSG:4326',
+      center: [114.08, 22.54],
+      zoom: 12
+    })
+  });
+  $(function () {
+    map.on('click', function (evt) {
+      var coordinate = evt.coordinate;      //获取点击要素的位置coordinate[0]为精度coordinate[1]为纬度
+      /****************************************************/
+      //判断当前单击处是否有要素，捕获到要素时弹出popup
+      var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature, layerVetor) {
+        return feature;
+      });
+      if (feature) { //捕捉到要素
+        $('#gpsspeedval').html(feature.get('starttime'))
+        $('#vehiclenumberval').html(feature.get('vehiclenum'))
+        console.log("获取到点击的要素" + ":" + coordinate[0]);  //其中lei是定义的属性
+      }
+    })
+  })
+
+  var tempSource = new ol.source.Vector();
+  var featureOverlay = new ol.layer.Vector({
+    source: tempSource,
+  });
+
+
+  function searchTime() {
+    let choice = $('[name=choice]:checked').val()
+    var starttime = document.getElementById("starttime").value;
+    var endtime = document.getElementById("endtime").value;
+    let condition
+    var ft = []
+    if (choice == 'point') {
+      ft = ['taxi']
+      condition = ol.format.filter.and(
+        ol.format.filter.greaterThanOrEqualTo('gps_date', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('gps_date', "*" + endtime + "*")
+      )
+    } else if (choice == 'line') {
+      ft = ['subtrip']
+      condition = ol.format.filter.and(
+        ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+        ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+      )
+
+    } else if (choice == 'od') {
+      ft = ['od']
+      condition = ol.format.filter.and(
+        ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+        ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+      )
+    }
+    if (drawVector.getKeys().length > 0) {
+      map.removeLayer(drawVector);
+      drawSource.clear();
+    }
+    console.log(condition)
+
+    var featureRequest = new ol.format.WFS().writeGetFeature({
+      srsName: 'EPSG:4326',//坐标系统
+      featureNS: 'http://47.98.155.117/postgis',//命名空间 URI
+      featurePrefix: 'postgis',//工作区名称
+      featureTypes: ft,//查询图层，可以是同一个工作区下多个图层，逗号隔开
+      outputFormat: 'application/json',
+      filter: condition//ol.format.filter.like("gps_date", "*"+vehiclenum+"*"),
+
+    });
+
+    fetch('http://120.26.74.21:8080/geoserver/wfs/', {
+      method: 'POST',
+      body: new XMLSerializer().serializeToString(featureRequest)
+    }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      console.log(json);
+      var features = new ol.format.GeoJSON().readFeatures(json);
+      if (features.length == 0) {
+        alert('未查询到数据！')
+      } else {
+        drawSource.addFeatures(features);
+        map.addLayer(drawVector);
+        map.getView().fit(drawSource.getExtent());
+      }
+    });
+  }
+
+  function searchCombine() {
+    let combine = $('[name=combine]:checked').val()
+    if (combine == 'idandspace') {
+      idandspace()
+    } else if (combine == 'idandtime') {
+      idandtime()
+    } else if (combine == 'timeandspace') {
+      timeandspace()
+    } else if (combine == 'idandtimeandspace') {
+      idandtimeandspace()
+    }
+  }
+
+  function idandspace() {
+    var vehiclenum = document.getElementById("vehiclenum").value;
+    let choice = $('[name=choice]:checked').val()
+    var ft = []
+    if (choice == 'point')
+      ft = ['taxi']
+    else if (choice == 'line')
+      ft = ['subtrip']
+    else if (choice == 'od')
+      ft = ['od']
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Circle',
+      freehand: false,
+      geometryFunction: ol.interaction.Draw.createBox()
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      var polygon = evt.feature.getGeometry()
+
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ft,
+        outputFormat: 'application/json',
+        filter: ol.format.filter.and(
+          ol.format.filter.like("vehiclenum", "*" + vehiclenum + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+      });
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+
+    })
+  }
+
+  function idandtime() {
+    var vehiclenum = document.getElementById("vehiclenum").value;
+    var starttime = document.getElementById("starttime").value;
+    var endtime = document.getElementById("endtime").value;
+    let choice = $('[name=choice]:checked').val()
+    var condition
+    var ft = []
+    if (choice == 'point') {
+      ft = ['taxi']
+      condition = ol.format.filter.and(
+        ol.format.filter.greaterThanOrEqualTo('gps_date', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('gps_date', "*" + endtime + "*")
+      )
+    } else if (choice == 'line') {
+      ft = ['subtrip']
+      condition = ol.format.filter.and(
+        ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+        ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+      )
+
+    } else if (choice == 'od') {
+      ft = ['od']
+      condition = ol.format.filter.and(
+        ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+        ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+        ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+      )
+    }
+
+    var featureRequest = new ol.format.WFS().writeGetFeature({
+      srsName: 'EPSG:4326',//坐标系统
+      featureNS: 'http://47.98.155.117/postgis',//命名空间 URI
+      featurePrefix: 'postgis',//工作区名称
+      featureTypes: ft,//查询图层，可以是同一个工作区下多个图层，逗号隔开
+      outputFormat: 'application/json',
+      filter: condition//ol.format.filter.like("gps_date", "*"+vehiclenum+"*"),
+
+    });
+
+    fetch('http://120.26.74.21:8080/geoserver/wfs/', {
+      method: 'POST',
+      body: new XMLSerializer().serializeToString(featureRequest)
+    }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      console.log(json);
+      var features = new ol.format.GeoJSON().readFeatures(json);
+      if (features.length == 0) {
+        alert('未查询到数据！')
+      } else {
+        drawSource.addFeatures(features);
+        map.addLayer(drawVector);
+        map.getView().fit(drawSource.getExtent());
+      }
+    });
+  }
+
+  function timeandspace() {
+
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Circle',
+      freehand: false,
+      geometryFunction: ol.interaction.Draw.createBox()
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      var polygon = evt.feature.getGeometry()
+      var starttime = document.getElementById("starttime").value;
+      var endtime = document.getElementById("endtime").value;
+      let choice = $('[name=choice]:checked').val()
+      var condition
+      var ft = []
+      if (choice == 'point') {
+        ft = ['taxi']
+        condition = ol.format.filter.and(
+          ol.format.filter.greaterThanOrEqualTo('gps_date', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('gps_date', "*" + endtime + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+      } else if (choice == 'line') {
+        ft = ['subtrip']
+        condition = ol.format.filter.and(
+          ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+          ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+
+      } else if (choice == 'od') {
+        ft = ['od']
+        condition = ol.format.filter.and(
+          ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+          ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+      }
+
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ft,
+        outputFormat: 'application/json',
+        filter: condition
+      });
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+        // mode: 'no-cors'
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+
+    })
+  }
+
+  function idandtimeandspace() {
+    if (draw) {
+      map.removeInteraction(draw);
+    }
+    draw = new ol.interaction.Draw({
+      source: drawSource,
+      type: 'Circle',
+      freehand: false,
+      geometryFunction: ol.interaction.Draw.createBox()
+    });
+    map.addInteraction(draw);
+    draw.on('drawend', function (evt) {
+      if (drawVector.getKeys().length > 0) {
+        map.removeLayer(drawVector);
+        drawSource.clear();
+      }
+      var polygon = evt.feature.getGeometry()
+      var vehiclenum = document.getElementById("vehiclenum").value;
+      var starttime = document.getElementById("starttime").value;
+      var endtime = document.getElementById("endtime").value;
+      let choice = $('[name=choice]:checked').val()
+      var condition
+      var ft = []
+      if (choice == 'point') {
+        ft = ['taxi']
+        condition = ol.format.filter.and(
+          ol.format.filter.like("vehiclenum", "*" + vehiclenum + "*"),
+          ol.format.filter.greaterThanOrEqualTo('gps_date', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('gps_date', "*" + endtime + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+      } else if (choice == 'line') {
+        ft = ['subtrip']
+        condition = ol.format.filter.and(
+          ol.format.filter.like("vehiclenum", "*" + vehiclenum + "*"),
+          ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+          ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+
+      } else if (choice == 'od') {
+        ft = ['od']
+        condition = ol.format.filter.and(
+          ol.format.filter.like("vehiclenum", "*" + vehiclenum + "*"),
+          ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+          ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+          ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*"),
+          ol.format.filter.intersects("geom", polygon)
+        )
+      }
+      var featureRequest = new ol.format.WFS().writeGetFeature({
+        srsName: 'EPSG:4326',
+        featureNS: 'http://47.98.155.117/postgis',
+        featurePrefix: 'postgis',
+        featureTypes: ft,
+        outputFormat: 'application/json',
+        filter: condition
+      });
+      fetch('http://120.26.74.21:8080/geoserver/wfs', {
+        method: 'POST',
+        body: new XMLSerializer().serializeToString(featureRequest),
+      }).then(function (response) {
+        return response.json();
+      }).then(function (json) {
+        console.log(json);
+        var features = new ol.format.GeoJSON().readFeatures(json);
+        if (features.length == 0) {
+          alert('未查询到数据！')
+        } else {
+          drawSource.addFeatures(features);
+          map.addLayer(drawVector);
+          map.getView().fit(drawSource.getExtent());
+        }
+      });
+
+    })
+  }
+
+  function searchByProperty() {
+    let choice = $('[name=choice]:checked').val()
+    var ft = []
+    if (choice == 'point')
+      ft = ['taxi']
+    else if (choice == 'line')
+      ft = ['subtrip']
+    else if (choice == 'od')
+      ft = ['od']
+    if (drawVector.getKeys().length > 0) {
+      map.removeLayer(drawVector);
+      drawSource.clear();
+    }
+
+    var vehiclenum = document.getElementById("vehiclenum").value;
+    var featureRequest = new ol.format.WFS().writeGetFeature({
+      srsName: 'EPSG:4326',//坐标系统
+      featureNS: 'http://47.98.155.117/postgis',//命名空间 URI
+      featurePrefix: 'postgis',//工作区名称
+      featureTypes: ft,//查询图层，可以是同一个工作区下多个图层，逗号隔开
+      outputFormat: 'application/json',
+      filter: ol.format.filter.like("vehiclenum", "*" + vehiclenum + "*"),
+    });
+
+    fetch('http://120.26.74.21:8080/geoserver/wfs', {
+      method: 'POST',
+      body: new XMLSerializer().serializeToString(featureRequest),
+      // mode: 'no-cors'
+    }).then(function (response) {
+      return response.json();
+    }).then(function (json) {
+      //console.log(json);
+      var features = new ol.format.GeoJSON().readFeatures(json);
+      console.log(features)
+      if (features.length == 0) {
+        alert('未查询到数据！')
+      } else {
+        drawSource.addFeatures(features);
+        map.addLayer(drawVector);
+        map.getView().fit(drawSource.getExtent());
+
+      }
+    });
+  }
+
+</script>
+</body>
 </html>
