@@ -28,30 +28,32 @@
     padding: 10px;
     background-color: rgba(179, 199, 185, 0.8);
     }
+    button{
+    color: white;
+    background: rgb(66, 185, 131);
+    height: 42px;
+    width: 100%;
+    margin-bottom: 10px;
+    border-width: 0;
+    border-radius: 2px;
+    }
     label{
-        font-weight: 400;
+        font-size: 14px;
+        height: 40px;
+        width: 78px;
     }
-    #featureInfo{
-        background-color: #fff;
-    }
-    .table-bordered{
-        border: 2px solid #ddd;
+    input{
+        width: 150px;
+        height: 40px;
+        border-radius: 2px;
+        border: 0;
     }
 </style>
 <body>
 <div id="menu" >
-    <div>
-        <input name="searchtype" value="polygon" id="polygonSearch"  type="radio">
-        <label for="polygonSearch">多边形搜索</label>
-    </div>
-    <div>
-        <input name="searchtype" value="circle" id="circleByStartPoint"  type="radio">
-        <label for="polygonSearch">圆形搜索</label>
-    </div>
-    <div>
-        <input name="searchtype" value="property" id="propertySearch"  type="radio">
-        <label for="polygonSearch">属性查询</label>
-    </div>
+    <button onclick="searchByPolygon()">多边形搜索</button>
+    <button onclick="searchByCircle()">圆形搜索</button>
+    <button onclick="queryFeature()">属性查询</button>
     <div id="featureInfo" ></div>
 </div>
 <div id="map" class="map" style="height:700px"> </div>
@@ -113,19 +115,6 @@
         source: drawSource,
         style:darkStyle
     });
-    $('input:radio[name="searchtype"]').change(function() {
-        var checkValue = $('input:radio[name="searchtype"]:checked').val();
-        //console.log(checkValue);
-        if (checkValue == 'polygon') {
-            searchByPolygon();
-        } else if (checkValue == 'circle') {
-            searchByCircle();
-        } else if (checkValue == 'property') {
-            queryFeature();
-        }else {
-
-        }
-    });
     function searchByPolygon() {
         if(draw){
             map.removeInteraction(draw);
@@ -166,7 +155,7 @@
                         var g= features[i].getGeometry();
                         p[i] = new Object();
                         var properties = features[i].getProperties();
-                        console.log(features[i].getGeometry());
+                        // console.log(features[i].getGeometry());
                         p[i].x = features[i].getGeometry().getCoordinates()[0];
                         p[i].y = features[i].getGeometry().getCoordinates()[1];
                         p[i].tj = false;
@@ -255,7 +244,7 @@
                         var g= features[i].getGeometry();
                         p[i] = new Object();
                         var properties = features[i].getProperties();
-                        console.log(features[i].getGeometry());
+                        // console.log(features[i].getGeometry());
                         p[i].x = features[i].getGeometry().getCoordinates()[0];
                         p[i].y = features[i].getGeometry().getCoordinates()[1];
                         p[i].tj = false;
@@ -333,7 +322,7 @@
         if(drawInteraction){
             map.removeInteraction(drawInteraction);
         }
-        console.log("shabizhangkai");
+        // console.log("shabizhangkai");
         //map.getInteractions().clear();
         selectInteration = new ol.interaction.Select();
         map.addInteraction(selectInteration);
@@ -343,36 +332,21 @@
                 console.log('null');
                 document.getElementById('featureInfo').style.display='none';
             } else {
-                var feature = e.target.getFeatures().getArray()[0];
-                //content.innerHTML = feature.getId() + '<br>';
-                var keys = feature.getKeys();
-                var properties = feature.getProperties();
-                //container.style.display = 'block';
                 var content=document.getElementById('featureInfo');
-                content.style.display='block';
+                var feature = e.target.getFeatures().getArray()[0];
+                var data =feature.values_
+                var id=data.id
+                var endPoint=data.geometry.flatCoordinates
+                var startPoint=data.startpoint.coordinates
+                var startTime=data.starttime
+                var endTime=data.endtime
 
-                //title.style.display = 'block';
-                var table='';
-                var objectlist=['startpoint','endpoint','geometry'];
-                table+='<table id="simple-table" class="table  table-bordered table-hover">' +'<thead>'+'<tr>';
-                for(var i=0;i<keys.length;i++){
-                    if (objectlist.indexOf(keys[i])<0){
-                        table += '<th>' + keys[i] + '</th>';
-                    }
-                }
-
-                table+='</tr>'+'</thead>'+'<tbody>'+'<tr>';
-                for (var i = 0; i < keys.length; i++) {
-                    if (objectlist.indexOf(keys[i])<0) {
-                        table += '<th>' + properties[keys[i]] + '</th>';
-                        console.log(properties[keys[i]]);
-                    }
-                }
-                table+='</tr>'+'</tbody>'+'</table>';
+                var table=  '<div><label>id:</label><input value='+id+'></label></div>'+
+                            '<div><label>startPoint:</label><input value='+startPoint[0].toFixed(6)+','+startPoint[1].toFixed(6)+'></label></div>'+
+                            '<div><label>endPoint:</label><input value='+endPoint[0].toFixed(6)+','+endPoint[1].toFixed(6)+'></label></div>'+
+                            '<div><label>startTime:</label><input value='+startTime.toString().replace(' ','-').replace('T','-').replace('Z','')+'></label></div>'+
+                            '<div><label>endTime:</label><input value='+endTime.toString().replace(' ','-').replace('T','-').replace('Z','')+'></label></div>'
                 content.innerHTML=table;
-                console.log(content.innerHTML);
-
-
             }
         })
     }

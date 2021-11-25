@@ -248,7 +248,7 @@ export default {
         color: white;
         background-color: rgba(33, 150, 243, 0.8);
         transition: opacity .2s linear;
-        text-align: left;
+        text-align: center;
     }
 
     .dropzone .dz-preview .dz-details .dz-filename span, .dropzone .dz-preview .dz-details .dz-size span {

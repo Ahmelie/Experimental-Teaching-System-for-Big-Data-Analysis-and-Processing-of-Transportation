@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       map: null,
+      lyer: null,
       hotData: null
     }
   },

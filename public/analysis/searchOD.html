@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>根据属性查询</title>
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css">
+
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+
+
+</head>
+<style>
+    #menu{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+    height: 100%;
+    z-index: 1000;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: rgba(179, 199, 185, 0.8);
+    }
+    
+    button{
+    color: white;
+    background: rgb(66, 185, 131);
+    height: 42px;
+    width: 100%;
+    margin-bottom: 10px;
+    border-width: 0;
+    border-radius: 2px;
+    }
+    input[type=radio]{
+        zoom:150%;
+        margin: 10px;
+        vertical-align:middle;
+        font-size: 16px;
+    }
+    label{
+        height: 40px;
+        line-height: 40px;
+    }
+</style>
+<body>
+<div id="menu"> 
+    <label>特征选择:</label>
+        <input name="choice" value="point" id="point" type="radio" checked="checked"><label>点</label>
+        <input name="choice" value="line" id="line" type="radio"><label>线</label>
+
+        <button onclick="drawcircleO()">画第一个圆</button>
+        <button onclick="drawcircleD()">画第二个圆</button>
+        <button onclick="searchOD()">子轨迹生成</button>
+
+        <button onclick="resetting()">重置</button>
+</div>
+<div id="map" class="map" style="height:700px">
+
+<script>
+    var feature;
+    var draw;
+    //11.25增加全局变量OD
+    var circleO;
+    var circleD;
+    var source = new ol.source.Vector();
+    var selectSource=new ol.source.Vector();
+    var selectVector=new ol.layer.Vector({
+        source:selectSource,
+        style:hightStyle,
+    });
+    var drawSource = new ol.source.Vector();
+    var hightStyle = new ol.style.Style({
+        //填充色
+        fill: new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.2)'
+        }),
+        //边线颜色
+        stroke: new ol.style.Stroke({
+            color: '#b482ec',
+            width: 6
+        }),
+
+        //形状
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+                color: 'rgba(117,205,241,0.8)'
+            })
+        })
+    })
+    var drawVector = new ol.layer.Vector({
+        source: drawSource,
+        style:hightStyle
+    });
+
+    function resetting(){
+        drawSource.clear();
+    }
+    function drawcircleO() {
+        if (draw) {
+            map.removeInteraction(draw);
+        }
+        draw = new ol.interaction.Draw({
+            source: drawSource,
+            type: 'Circle',
+            geometryName: 'geometry',
+            style:new ol.style.Style({
+                stroke:new ol.style.Stroke({
+                    color: '#e8aa53',
+                    width: 6
+                })
+            })
+        });
+        map.addInteraction(draw);
+        draw.on('drawend', function (evt) {
+            circleO = new ol.geom.Polygon.fromCircle(evt.feature.getGeometry()); //new ol.geom.Polygon.fromCircle(evt.feature.getGeometry())
+            if (drawVector.getKeys().length > 0) {
+                map.removeLayer(drawVector);
+                drawSource.clear();
+            }
+            var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ['taxi'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.intersects("geom", circleO)
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest),
+                // mode: 'no-cors'
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                console.log(json);
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                    alert('未查询到数据！')
+                }else{
+            // drawSource.addFeatures(features);
+            map.addLayer(drawVector);
+            map.getView().fit(drawSource.getExtent());
+                }
+            });
+        })
+    }
+
+    function drawcircleD(){
+        if(draw){
+            map.removeInteraction(draw);
+        }
+        draw = new ol.interaction.Draw({
+            source: drawSource,
+            type: 'Circle',
+            geometryName: 'geometry'
+        });
+        map.addInteraction(draw);
+        draw.on('drawend', function (evt) {
+            circleD=new ol.geom.Polygon.fromCircle(evt.feature.getGeometry()); //new ol.geom.Polygon.fromCircle(evt.feature.getGeometry())
+            if(drawVector.getKeys().length==2){
+                map.removeLayer(drawVector);
+                drawSource.clear();
+            }
+            var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ['taxi'],
+                outputFormat: 'application/json',
+                filter: ol.format.filter.intersects("geom", circleD)
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest),
+                // mode: 'no-cors'
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                console.log(json);
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                    alert('未查询到数据！')
+                }else{
+                    // drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+         })
+
+
+    }
+
+    function searchOD() {
+        let choice = $('[name=choice]:checked').val()
+        var ft = []
+        if (choice == 'point')
+            ft = ['origin']
+        else if (choice == 'line')
+            ft = ['subtrip']
+
+            var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ft,
+                outputFormat: 'application/json',
+
+                filter:
+                    ol.format.filter.and(
+                        ol.format.filter.intersects("startpoint",circleO),
+                        ol.format.filter.intersects("endpoint", circleD)
+                    )
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest),
+                // mode: 'no-cors'
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                console.log(json);
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                    alert('未查询到数据！')
+                }else{
+                    drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+        }
+
+    var map = new ol.Map({
+        target: 'map',                          // 关联到对应的div容器
+        layers: [
+            new ol.layer.Tile({                 // 瓦片图层
+                source: new ol.source.OSM()     // OpenStreetMap数据源
+            })
+        ],
+        view: new ol.View({                     // 地图视图
+            projection: 'EPSG:4326',
+            center: [114.08,22.54],
+            zoom: 12
+        })
+    });
+    $(function () {
+        map.on('click', function(evt) {
+            var coordinate = evt.coordinate;    
+            var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layerVetor) { return feature; });
+
+            if (feature) { //捕捉到要素
+                // featuerInfo = feature.getProperties().features[0].N.attribute;
+                $('#gpsspeedval').html(feature.get('gps_date'))
+                $('#vehiclenumberval').html(feature.get('vehiclenum'))
+                console.log("获取到点击的要素" + "jingdu:" + coordinate[0]);  //其中lei是定义的属性
+            }
+        })
+    })
+</script>
+</body>
+</html>

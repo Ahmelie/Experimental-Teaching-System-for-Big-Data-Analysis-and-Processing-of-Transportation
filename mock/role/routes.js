@@ -45,44 +45,6 @@ const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/documentation',
-  //   component: 'layout/Layout',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: 'views/documentation/index',
-  //       name: 'Documentation',
-  //       meta: { title: 'Documentation', icon: 'documentation', affix: true }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/guide',
-  //   component: 'layout/Layout',
-  //   redirect: '/guide/index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: 'views/guide/index',
-  //       name: 'Guide',
-  //       meta: { title: 'Guide', icon: 'guide', noCache: true }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/Pretreatment',
-  //   component: 'layout/Layout',
-  //   redirect: '/Pretreatment/index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: 'views/Pretreatment/index',
-  //       name: 'Pretreatment',
-  //       meta: { title: '交通出行数据轨迹预处理模块', icon: 'Pretreatment', noCache: true }
-  //     }
-  //   ]
-  // },
   {
     path: '/Pretreatment',
     component: 'layout/Layout',
@@ -132,19 +94,6 @@ const constantRoutes = [
     ]
   },
 
-  // {
-  //   path: '',
-  //   component: 'layout/Layout',
-  //   redirect: 'dashboard',
-  //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       component: 'views/dashboard/index',
-  //       name: 'Dashboard',
-  //       meta: { title: '主页', icon: 'dashboard', affix: true }
-  //     }
-  //   ]
-  // },
   {
     path: '',
     component: 'layout/Layout',
@@ -158,58 +107,6 @@ const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: 'Search',
-  //   component: 'layout/Layout',
-  //   redirect: '/Search/index',
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: 'views/Search/index',
-  //       name: 'Search',
-  //       meta: { title: '交通出行数据时空查询模块', icon: 'dashboard', affix: true }
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: '/Search',
-  //   component: 'layout/Layout',
-  //   redirect: '/Search/index',
-  //   alwaysShow: true,
-  //   meta: {
-  //     title: '交通出行数据时空查询模块',
-  //     icon: 'example',
-  //     roles: ['admin', 'editor']
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: 'views/permission/page',
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'Page Permission',
-  //         roles: ['admin']
-  //       }
-  //     },
-  //     {
-  //       path: 'directive',
-  //       component: 'views/permission/directive',
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'Directive Permission'
-  //       }
-  //     },
-  //     {
-  //       path: 'role',
-  //       component: 'views/permission/role',
-  //       name: 'RolePermission',
-  //       meta: {
-  //         title: 'Role Permission',
-  //         roles: ['admin']
-  //       }
-  //     }
-  //   ]
-  // },
   {
     path: '/Analysis',
     component: 'layout/Layout',
@@ -243,7 +140,55 @@ const constantRoutes = [
         component: '/views/Analysis/inflowRange',
         name: 'inflowRange',
         meta: {
-          title: '基于汇的流入范围分析n',
+          title: '基于汇的流入范围分析',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'searchOD',
+        component: '/views/Analysis/searchOD',
+        name: 'searchOD',
+        meta: {
+          title: 'OD查询',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+  {
+    path: '/Facilities',
+    component: 'layout/Layout',
+    redirect: '/Facilities/index',
+    alwaysShow: true,
+    meta: {
+      title: '交通设施资源优化',
+      icon: 'eye',
+      roles: ['admin', 'editor']
+    },
+    children: [
+      {
+        path: 'Candidate',
+        component: 'views/Facilities/Candidate',
+        name: 'Candidate',
+        meta: {
+          title: '候选站点推荐',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'ChooseLoc',
+        component: '/views/Facilities/ChooseLoc',
+        name: 'ChooseLoc',
+        meta: {
+          title: '交通设施选址'
+        }
+      },
+      {
+        path: 'Scope',
+        component: '/views/Facilities/Scope',
+        name: 'Scope',
+        meta: {
+          title: '设施服务范围',
           roles: ['admin']
         }
       }

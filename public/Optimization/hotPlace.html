@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>根据属性查询</title>
+
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css">
+
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+    <!--    <script src="E:/Test_Release/gis/ol/ol.js"></script>-->
+    <!--    <link href="E:/Test_Release/gis/ol/ol.css" rel="stylesheet" />-->
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+
+
+</head>
+<body>
+<div class="row">
+    <div id="map" class="map" style="height:700px"></div>
+
+    <!-- PAGE CONTENT ENDS -->
+
+</div><!-- /.row -->
+<style>
+    #popup {
+        background-color: #088;
+    }
+</style>
+<script>
+
+    var landSource = new ol.source.Vector({
+        url: 'http://120.26.74.21:8080/geoserver/wfs?' +
+            'service=WFS&' +
+            'version=1.1.0&' +
+            'request=GetFeature&' +
+            'typeNames=postgis:hotplace&' + // Here goes your-workspace:your-layer
+            'outputFormat=json&' +
+            'srsname=EPSG:4326',
+        format: new ol.format.GeoJSON({
+            geometryName: 'geom'//postgis的空间存储字段名
+        })
+    });
+    var landLayer = new ol.layer.Vector({
+        // preload: Infinity,
+        source: landSource,
+        style:new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: '#ff00008c'
+            }),
+            stroke:new ol.style.Stroke({
+                color:'black',
+                width:1
+            })
+        }),
+        visiable:false
+    });
+
+    var map = new ol.Map({
+        target: 'map',                          // 关联到对应的div容器
+        layers: [
+            new ol.layer.Tile({                 // 瓦片图层
+                source: new ol.source.OSM()     // OpenStreetMap数据源
+            }),
+            landLayer
+        ],
+        view: new ol.View({                     // 地图视图
+            projection: 'EPSG:4326',
+            center: [114.093308,22.549615],
+            zoom: 13
+        })
+    });
+
+</script>
+</body>
+</html>
