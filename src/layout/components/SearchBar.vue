@@ -1,51 +1,12 @@
 <template>
   <div class="search-bar">
     <van-radio-group v-if="type==1" v-model="radio">
-      <van-cell-group>
-        <van-search
-          v-model="value"
-          show-action
-          label="车牌号"
-          placeholder=""
-          @search="onSearch"
-        >
-          <template #action>
-            <div @click="onSearch">查询</div>
-          </template>
-        </van-search>
-        <van-cell title="周边搜索" clickable @click="radio = '1'">
-          <select id="radius" οnchange="setSize(parseFloat(this.value))">
-            <option name="radius" value="0.1">100</option>
-            <option name="radius" value="0.2">200</option>
-            <option name="radius" value="0.3">300</option>
-          </select>
-          <label>以内</label>
-          <template #right-icon>
-            <van-radio name="1" />
-          </template>
-
-        </van-cell>
-        <van-cell title="多边形搜索" clickable @click="radio = '2'">
-          <template #right-icon>
-            <van-radio name="2" />
-          </template>
-        </van-cell>
-        <van-cell title="起始点搜索" clickable @click="radio = '3'">
-          <template #right-icon>
-            <van-radio name="3" />
-          </template>
-        </van-cell>
-        <van-cell title="终止点搜索" clickable @click="radio = '4'">
-          <template #right-icon>
-            <van-radio name="4" />
-          </template>
-        </van-cell>
-        <van-cell title="属性查询" clickable @click="radio = '5'">
-          <template #right-icon>
-            <van-radio name="5" />
-          </template>
-        </van-cell>
-      </van-cell-group>
+      <div class="text-content" type="text" v-text="labelData" />
+      <el-table id="tab" :data="tableData" max-height="660">
+        <el-table-column prop="ID" label="ID" align="center" width="60" />
+        <el-table-column v-if="tableData[0].Point" prop="Point" label="经纬度" align="center" />
+        <el-table-column v-if="tableData[0].Shape_Area" prop="Shape_Area" label="面积" align="center" />
+      </el-table>
     </van-radio-group>
     <van-form v-if="type==2" @submit="onSubmit">
       <van-radio-group v-model="choosePoint" class="choose-point" direction="horizontal">
@@ -89,6 +50,14 @@ Vue.use(Button)
 export default {
   name: 'SearchBar',
   props: {
+    labelData: {
+      type: String,
+      default: ''
+    },
+    tableData: {
+      type: array,
+      default: {}
+    },
     type: {
       type: Number,
       default: 0
@@ -166,7 +135,9 @@ export default {
     font-weight: 68 !important;
   }
 }
-
+.text-content{
+  margin-bottom: 10px;
+}
 .choose-point{
   height: 44px;
 }
@@ -179,5 +150,25 @@ export default {
 .van-field__label{
   width: auto !important;
   margin-right: 0 !important;
+}
+
+#tab td, #tab th {
+  border: 1px solid #ddd;
+  padding: 2px;
+}
+
+#tab tr:nth-child(even){background-color: #f2f2f2;}
+
+#tab tr:hover {background-color: #ddd;}
+
+#tab th {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  text-align: center;
+  background-color: #7ab49a;
+  color: white;
+}
+.el-table .cell{
+  white-space:nowrap;
 }
 </style>

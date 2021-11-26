@@ -52,11 +52,12 @@
     <label>特征选择:</label>
         <input name="choice" value="point" id="point" type="radio" checked="checked"><label>点</label>
         <input name="choice" value="line" id="line" type="radio"><label>线</label>
-
-        <button onclick="drawcircleO()">画第一个圆</button>
-        <button onclick="drawcircleD()">画第二个圆</button>
+    <label>开始时间</label><input value="2011/11/8 7:00" class="landkey" type="text" id='starttime' placeholder="">
+    <label>结束时间</label><input value="2011/11/8 9:00" class="landkey" type="text" id='endtime' placeholder="">
+        <button onclick="drawcircleO()">画O区域</button>
+        <button onclick="drawcircleD()">画D区域</button>
         <button onclick="searchOD()">子轨迹生成</button>
-
+        <button onclick="searchODtime()">子轨迹生成（时间）</button>
         <button onclick="resetting()">重置</button>
 </div>
 <div id="map" class="map" style="height:700px">
@@ -77,14 +78,17 @@
     var hightStyle = new ol.style.Style({
         //填充色
         fill: new ol.style.Fill({
-            color: 'rgba(255, 255, 255, 0.2)'
+            color: 'rgba(255,255,255,0)'
         }),
         //边线颜色
         stroke: new ol.style.Stroke({
-            color: '#b482ec',
+            color: 'rgba(203,93,234,0.87)',
             width: 6
         }),
-
+        stroke: new ol.style.Stroke({
+            color: 'rgba(20,92,232,0.87)',
+            width: 6
+        }),
         //形状
         image: new ol.style.Circle({
             radius: 7,
@@ -129,7 +133,13 @@
                 featurePrefix: 'postgis',
                 featureTypes: ['taxi'],
                 outputFormat: 'application/json',
-                filter: ol.format.filter.intersects("geom", circleO)
+                // filter: ol.format.filter.and(
+                 filter:   ol.format.filter.intersects("geom", circleO)
+                   //  ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+                   // ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+                    // // ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+                    // ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+                // )
             });
             fetch('http://120.26.74.21:8080/geoserver/wfs', {
                 method: 'POST',
@@ -173,7 +183,13 @@
                 featurePrefix: 'postgis',
                 featureTypes: ['taxi'],
                 outputFormat: 'application/json',
-                filter: ol.format.filter.intersects("geom", circleD)
+                 filter: //ol.format.filter.and(
+                    ol.format.filter.intersects("geom", circleD)
+                    // ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+                    // // ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+                    //  ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+                    // ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+                //)
             });
             fetch('http://120.26.74.21:8080/geoserver/wfs', {
                 method: 'POST',
@@ -213,7 +229,7 @@
                 outputFormat: 'application/json',
 
                 filter:
-                    ol.format.filter.and(
+                    ol.format.filter.or(
                         ol.format.filter.intersects("startpoint",circleO),
                         ol.format.filter.intersects("endpoint", circleD)
                     )
@@ -235,6 +251,71 @@
                     map.getView().fit(drawSource.getExtent());
                 }
             });
+        }
+        function searchODtime(){
+            var starttime = document.getElementById("starttime").value;
+            var endtime = document.getElementById("endtime").value;
+            let choice = $('[name=choice]:checked').val()
+            let condition
+            var ft = []
+            if (choice == 'point'){
+                ft = ['origin']
+                condition=ol.format.filter.and(
+                    ol.format.filter.intersects("startpoint",circleO),
+                    ol.format.filter.intersects("endpoint", circleD),
+                ol.format.filter.or(
+                    ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+                    ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+                    ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+                    ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*")
+
+                ))
+            }
+            else if (choice == 'line'){
+                ft = ['subtrip']
+                condition= ol.format.filter.and(
+                    ol.format.filter.intersects("startpoint",circleO),
+                    ol.format.filter.intersects("endpoint", circleD),
+                    ol.format.filter.or(
+                        ol.format.filter.greaterThanOrEqualTo('starttime', "*" + starttime + "*"),
+                        ol.format.filter.lessThanOrEqualTo('starttime', "*" + endtime + "*"),
+                        ol.format.filter.greaterThanOrEqualTo('endtime', "*" + starttime + "*"),
+                        ol.format.filter.lessThanOrEqualTo('endtime', "*" + endtime + "*"),)
+                    )
+
+
+
+
+            }
+
+            var featureRequest = new ol.format.WFS().writeGetFeature({
+                srsName: 'EPSG:4326',
+                featureNS: 'http://47.98.155.117/postgis',
+                featurePrefix: 'postgis',
+                featureTypes: ft,
+                outputFormat: 'application/json',
+
+                filter:condition
+
+            });
+            fetch('http://120.26.74.21:8080/geoserver/wfs', {
+                method: 'POST',
+                body: new XMLSerializer().serializeToString(featureRequest),
+                // mode: 'no-cors'
+            }).then(function(response) {
+                return response.json();
+            }).then(function(json) {
+                console.log(json);
+                var features = new ol.format.GeoJSON().readFeatures(json);
+                if(features.length == 0){
+                    alert('未查询到数据！')
+                }else{
+                    drawSource.addFeatures(features);
+                    map.addLayer(drawVector);
+                    map.getView().fit(drawSource.getExtent());
+                }
+            });
+
         }
 
     var map = new ol.Map({

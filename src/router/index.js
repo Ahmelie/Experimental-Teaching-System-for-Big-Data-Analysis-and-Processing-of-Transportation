@@ -191,7 +191,7 @@ export const constantRoutes = [
         component: () => import('@/views/Analysis/searchOD'),
         name: 'searchOD',
         meta: {
-          title: 'OD查询',
+          title: 'OD区域轨迹查询',
           roles: ['admin']
         }
       }

@@ -4,12 +4,12 @@
       <input type="file" d="file_input" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" @change="importf(this)">
     </div>
     <el-table id="tab" :data="listTable" style="width:100%">
-      <el-table-column prop="id" label="id" align="center" />
-      <el-table-column prop="vehicleNum" label="vehicleNum" align="center" />
-      <el-table-column prop="startPoint" label="startPoint" align="center" />
-      <el-table-column prop="endPoint" label="endPoint" align="center" />
-      <el-table-column prop="startTime" label="startTime" align="center" />
-      <el-table-column prop="endTime" label="endTime" align="center" />
+      <el-table-column prop="id" label="ID" align="center" />
+      <el-table-column prop="vehicleNum" label="车牌号" align="center" />
+      <el-table-column prop="startPoint" label="起点" align="center" />
+      <el-table-column prop="endPoint" label="终点" align="center" />
+      <el-table-column prop="startTime" label="开始时间" align="center" />
+      <el-table-column prop="endTime" label="结束时间" align="center" />
     </el-table>
   </div>
 </template>

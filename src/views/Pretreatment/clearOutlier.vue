@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <el-table id="tab" :data="listTable" stripe style="width:100%">
-      <el-table-column prop="ID" label="id" align="center" />
-      <el-table-column prop="vehicleNum" label="vehicleNum" align="center" />
-      <el-table-column prop="Point" label="point" align="center" />
-      <el-table-column prop="Time" label="time" align="center" />
-      <el-table-column prop="Direction" label="direction" align="center" />
-      <el-table-column prop="Speed" label="speed" align="center" />
+      <el-table-column prop="ID" label="ID" align="center" />
+      <el-table-column prop="vehicleNum" label="车牌号" align="center" />
+      <el-table-column prop="Point" label="坐标" align="center" />
+      <el-table-column prop="Time" label="时间" align="center" />
+      <el-table-column prop="Direction" label="方向" align="center" />
+      <el-table-column prop="Speed" label="速度" align="center" />
     </el-table>
   </div>
 </template>

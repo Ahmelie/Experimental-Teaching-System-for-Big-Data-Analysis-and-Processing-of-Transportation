@@ -41,10 +41,6 @@ export default {
         ],
         target: 'map',
         view: new View({
-          // projection: 'EPSG:4326',
-          // center: [114.08, 22.54],
-          // zoom: 12
-
           center: fromLonLat([113.994071, 22.575966]),
           zoom: 12,
           maxZoom: 19,

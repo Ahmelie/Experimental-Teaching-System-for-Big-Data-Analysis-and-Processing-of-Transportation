@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <iframe src="pretreatment/ODTable.html" scrolling="no" style="width: 100%;height: 636px;" frameborder="0" />
+    <iframe src="pretreatment/ODTable.html" scrolling="no" style="width: 100%;height: 635px;" frameborder="0" />
   </div>
 </template>
 

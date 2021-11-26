@@ -253,11 +253,11 @@
                 var startTime=data.starttime
                 var endTime=data.endtime
 
-                var table=  '<div><label>id:</label><input value='+id+'></label></div>'+
-                            '<div><label>startPoint:</label><input value='+startPoint[0].toFixed(6)+','+startPoint[1].toFixed(6)+'></label></div>'+
-                            '<div><label>endPoint:</label><input value='+endPoint[0].toFixed(6)+','+endPoint[1].toFixed(6)+'></label></div>'+
-                            '<div><label>startTime:</label><input value='+startTime.toString().replace(' ','-').replace('T','-').replace('Z','')+'></label></div>'+
-                            '<div><label>endTime:</label><input value='+endTime.toString().replace(' ','-').replace('T','-').replace('Z','')+'></label></div>'
+                var table=  '<div><label>ID:</label><input value='+id+'></label></div>'+
+                            '<div><label>起点:</label><input value='+startPoint[0].toFixed(6)+','+startPoint[1].toFixed(6)+'></label></div>'+
+                            '<div><label>终点:</label><input value='+endPoint[0].toFixed(6)+','+endPoint[1].toFixed(6)+'></label></div>'+
+                            '<div><label>开始时间:</label><input value='+startTime.toString().replace(' ','-').replace('T','-').replace('Z','')+'></label></div>'+
+                            '<div><label>结束时间:</label><input value='+endTime.toString().replace(' ','-').replace('T','-').replace('Z','')+'></label></div>'
                 content.innerHTML=table;
             }
         })
