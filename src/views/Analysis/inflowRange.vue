@@ -1,5 +1,5 @@
 <template>
-  <iframe src="analysis/inflowRange.html" scrolling="no" style="width: 100%;height: 656px;" frameborder="0" />
+  <iframe src="analysis/inflowRange.html" scrolling="no" style="width: 100%;height: 655px;" frameborder="0" />
 </template>
 
 <script>
